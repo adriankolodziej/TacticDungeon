@@ -1266,6 +1266,56 @@ public partial class @InputSystem: IInputActionCollection2, IDisposable
                     ""isPartOfComposite"": false
                 }
             ]
+        },
+        {
+            ""name"": ""Controls"",
+            ""id"": ""9a29982c-bbbd-41cb-8ea8-7d8449e9c079"",
+            ""actions"": [
+                {
+                    ""name"": ""PointAction"",
+                    ""type"": ""Button"",
+                    ""id"": ""e6ef5aa6-1143-4e47-9d50-ee64ba3f66c0"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false,
+                    ""priority"": 0
+                },
+                {
+                    ""name"": ""OptionsAction"",
+                    ""type"": ""Button"",
+                    ""id"": ""0052b14a-0266-4e47-90f4-7e7a8587a487"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false,
+                    ""priority"": 0
+                }
+            ],
+            ""bindings"": [
+                {
+                    ""name"": """",
+                    ""id"": ""67b8f9f0-2dba-4a91-95e1-a43e3b0d1726"",
+                    ""path"": ""<Mouse>/leftButton"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""PointAction"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""80820c01-5843-4ac3-94e5-b1c323308367"",
+                    ""path"": ""<Mouse>/rightButton"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""OptionsAction"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                }
+            ]
         }
     ],
     ""controlSchemes"": [
@@ -1359,6 +1409,10 @@ public partial class @InputSystem: IInputActionCollection2, IDisposable
         m_Camera_MoveCamera = m_Camera.FindAction("MoveCamera", throwIfNotFound: true);
         m_Camera_RotateCamera = m_Camera.FindAction("RotateCamera", throwIfNotFound: true);
         m_Camera_ZoomCamera = m_Camera.FindAction("ZoomCamera", throwIfNotFound: true);
+        // Controls
+        m_Controls = asset.FindActionMap("Controls", throwIfNotFound: true);
+        m_Controls_PointAction = m_Controls.FindAction("PointAction", throwIfNotFound: true);
+        m_Controls_OptionsAction = m_Controls.FindAction("OptionsAction", throwIfNotFound: true);
     }
 
     ~@InputSystem()
@@ -1366,6 +1420,7 @@ public partial class @InputSystem: IInputActionCollection2, IDisposable
         UnityEngine.Debug.Assert(!m_Player.enabled, "This will cause a leak and performance issues, InputSystem.Player.Disable() has not been called.");
         UnityEngine.Debug.Assert(!m_UI.enabled, "This will cause a leak and performance issues, InputSystem.UI.Disable() has not been called.");
         UnityEngine.Debug.Assert(!m_Camera.enabled, "This will cause a leak and performance issues, InputSystem.Camera.Disable() has not been called.");
+        UnityEngine.Debug.Assert(!m_Controls.enabled, "This will cause a leak and performance issues, InputSystem.Controls.Disable() has not been called.");
     }
 
     /// <summary>
@@ -1934,6 +1989,113 @@ public partial class @InputSystem: IInputActionCollection2, IDisposable
     /// Provides a new <see cref="CameraActions" /> instance referencing this action map.
     /// </summary>
     public CameraActions @Camera => new CameraActions(this);
+
+    // Controls
+    private readonly InputActionMap m_Controls;
+    private List<IControlsActions> m_ControlsActionsCallbackInterfaces = new List<IControlsActions>();
+    private readonly InputAction m_Controls_PointAction;
+    private readonly InputAction m_Controls_OptionsAction;
+    /// <summary>
+    /// Provides access to input actions defined in input action map "Controls".
+    /// </summary>
+    public struct ControlsActions
+    {
+        private @InputSystem m_Wrapper;
+
+        /// <summary>
+        /// Construct a new instance of the input action map wrapper class.
+        /// </summary>
+        public ControlsActions(@InputSystem wrapper) { m_Wrapper = wrapper; }
+        /// <summary>
+        /// Provides access to the underlying input action "Controls/PointAction".
+        /// </summary>
+        public InputAction @PointAction => m_Wrapper.m_Controls_PointAction;
+        /// <summary>
+        /// Provides access to the underlying input action "Controls/OptionsAction".
+        /// </summary>
+        public InputAction @OptionsAction => m_Wrapper.m_Controls_OptionsAction;
+        /// <summary>
+        /// Provides access to the underlying input action map instance.
+        /// </summary>
+        public InputActionMap Get() { return m_Wrapper.m_Controls; }
+        /// <inheritdoc cref="UnityEngine.InputSystem.InputActionMap.Enable()" />
+        public void Enable() { Get().Enable(); }
+        /// <inheritdoc cref="UnityEngine.InputSystem.InputActionMap.Disable()" />
+        public void Disable() { Get().Disable(); }
+        /// <inheritdoc cref="UnityEngine.InputSystem.InputActionMap.enabled" />
+        public bool enabled => Get().enabled;
+        /// <summary>
+        /// Implicitly converts an <see ref="ControlsActions" /> to an <see ref="InputActionMap" /> instance.
+        /// </summary>
+        public static implicit operator InputActionMap(ControlsActions set) { return set.Get(); }
+        /// <summary>
+        /// Adds <see cref="InputAction.started"/>, <see cref="InputAction.performed"/> and <see cref="InputAction.canceled"/> callbacks provided via <param cref="instance" /> on all input actions contained in this map.
+        /// </summary>
+        /// <param name="instance">Callback instance.</param>
+        /// <remarks>
+        /// If <paramref name="instance" /> is <c>null</c> or <paramref name="instance"/> have already been added this method does nothing.
+        /// </remarks>
+        /// <seealso cref="ControlsActions" />
+        public void AddCallbacks(IControlsActions instance)
+        {
+            if (instance == null || m_Wrapper.m_ControlsActionsCallbackInterfaces.Contains(instance)) return;
+            m_Wrapper.m_ControlsActionsCallbackInterfaces.Add(instance);
+            @PointAction.started += instance.OnPointAction;
+            @PointAction.performed += instance.OnPointAction;
+            @PointAction.canceled += instance.OnPointAction;
+            @OptionsAction.started += instance.OnOptionsAction;
+            @OptionsAction.performed += instance.OnOptionsAction;
+            @OptionsAction.canceled += instance.OnOptionsAction;
+        }
+
+        /// <summary>
+        /// Removes <see cref="InputAction.started"/>, <see cref="InputAction.performed"/> and <see cref="InputAction.canceled"/> callbacks provided via <param cref="instance" /> on all input actions contained in this map.
+        /// </summary>
+        /// <remarks>
+        /// Calling this method when <paramref name="instance" /> have not previously been registered has no side-effects.
+        /// </remarks>
+        /// <seealso cref="ControlsActions" />
+        private void UnregisterCallbacks(IControlsActions instance)
+        {
+            @PointAction.started -= instance.OnPointAction;
+            @PointAction.performed -= instance.OnPointAction;
+            @PointAction.canceled -= instance.OnPointAction;
+            @OptionsAction.started -= instance.OnOptionsAction;
+            @OptionsAction.performed -= instance.OnOptionsAction;
+            @OptionsAction.canceled -= instance.OnOptionsAction;
+        }
+
+        /// <summary>
+        /// Unregisters <param cref="instance" /> and unregisters all input action callbacks via <see cref="ControlsActions.UnregisterCallbacks(IControlsActions)" />.
+        /// </summary>
+        /// <seealso cref="ControlsActions.UnregisterCallbacks(IControlsActions)" />
+        public void RemoveCallbacks(IControlsActions instance)
+        {
+            if (m_Wrapper.m_ControlsActionsCallbackInterfaces.Remove(instance))
+                UnregisterCallbacks(instance);
+        }
+
+        /// <summary>
+        /// Replaces all existing callback instances and previously registered input action callbacks associated with them with callbacks provided via <param cref="instance" />.
+        /// </summary>
+        /// <remarks>
+        /// If <paramref name="instance" /> is <c>null</c>, calling this method will only unregister all existing callbacks but not register any new callbacks.
+        /// </remarks>
+        /// <seealso cref="ControlsActions.AddCallbacks(IControlsActions)" />
+        /// <seealso cref="ControlsActions.RemoveCallbacks(IControlsActions)" />
+        /// <seealso cref="ControlsActions.UnregisterCallbacks(IControlsActions)" />
+        public void SetCallbacks(IControlsActions instance)
+        {
+            foreach (var item in m_Wrapper.m_ControlsActionsCallbackInterfaces)
+                UnregisterCallbacks(item);
+            m_Wrapper.m_ControlsActionsCallbackInterfaces.Clear();
+            AddCallbacks(instance);
+        }
+    }
+    /// <summary>
+    /// Provides a new <see cref="ControlsActions" /> instance referencing this action map.
+    /// </summary>
+    public ControlsActions @Controls => new ControlsActions(this);
     private int m_KeyboardMouseSchemeIndex = -1;
     /// <summary>
     /// Provides access to the input control scheme.
@@ -2176,5 +2338,27 @@ public partial class @InputSystem: IInputActionCollection2, IDisposable
         /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
         /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
         void OnZoomCamera(InputAction.CallbackContext context);
+    }
+    /// <summary>
+    /// Interface to implement callback methods for all input action callbacks associated with input actions defined by "Controls" which allows adding and removing callbacks.
+    /// </summary>
+    /// <seealso cref="ControlsActions.AddCallbacks(IControlsActions)" />
+    /// <seealso cref="ControlsActions.RemoveCallbacks(IControlsActions)" />
+    public interface IControlsActions
+    {
+        /// <summary>
+        /// Method invoked when associated input action "PointAction" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnPointAction(InputAction.CallbackContext context);
+        /// <summary>
+        /// Method invoked when associated input action "OptionsAction" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnOptionsAction(InputAction.CallbackContext context);
     }
 }

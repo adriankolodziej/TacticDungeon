@@ -1,6 +1,6 @@
 {
     "version": 1,
-    "name": "InputSystem",
+    "name": "CustomInputSystem",
     "maps": [
         {
             "name": "Player",
@@ -1176,6 +1176,77 @@
                     "processors": "",
                     "groups": "",
                     "action": "ZoomCamera",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                }
+            ]
+        },
+        {
+            "name": "Controls",
+            "id": "9a29982c-bbbd-41cb-8ea8-7d8449e9c079",
+            "actions": [
+                {
+                    "name": "PointAction",
+                    "type": "Button",
+                    "id": "e6ef5aa6-1143-4e47-9d50-ee64ba3f66c0",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "Tap",
+                    "initialStateCheck": false,
+                    "priority": 0
+                },
+                {
+                    "name": "OptionsAction",
+                    "type": "Button",
+                    "id": "0052b14a-0266-4e47-90f4-7e7a8587a487",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false,
+                    "priority": 0
+                },
+                {
+                    "name": "MousePosition",
+                    "type": "Value",
+                    "id": "7c9874a6-f7e5-42c2-82b4-be42f290de74",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": true,
+                    "priority": 0
+                }
+            ],
+            "bindings": [
+                {
+                    "name": "",
+                    "id": "67b8f9f0-2dba-4a91-95e1-a43e3b0d1726",
+                    "path": "<Mouse>/leftButton",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "PointAction",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "80820c01-5843-4ac3-94e5-b1c323308367",
+                    "path": "<Mouse>/rightButton",
+                    "interactions": "Tap",
+                    "processors": "",
+                    "groups": "",
+                    "action": "OptionsAction",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "1ddd8407-b2c5-444b-a0d3-1267207bc557",
+                    "path": "<Mouse>/delta",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "MousePosition",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }
