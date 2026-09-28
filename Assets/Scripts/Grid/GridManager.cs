@@ -12,7 +12,7 @@ public class GridManager : MonoBehaviour
     
     void Start()
     {
-        Grid grid = new Grid(10, 10, 1.01f);
+        Grid grid = new Grid(10, 10, 1f);
         GridEvents.OnGridCreated.Invoke(this, grid);
     }
 
@@ -39,6 +39,7 @@ public class GridManager : MonoBehaviour
                 Cell cell = hit.collider.GetComponent<Cell>();
                 if (cell != null)
                 {
+                    GridEvents.OnCellChosen?.Invoke(this, (cell.X, cell.Y));
                     Debug.Log("Clicked on cell at coordinates: " + cell.transform.position + " (x: " + cell.X + ", y: " + cell.Y + ")");
                 }
             }

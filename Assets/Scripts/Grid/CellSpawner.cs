@@ -20,8 +20,10 @@ public class CellSpawner : MonoBehaviour
         {
             for(int y = 0; y < grid.GridArray.GetLength(1); y++)
             {
-                var cell = Instantiate(cubeCellPrefab, grid.GetWorldPosition(x, y), Quaternion.identity, this.transform);
-                cell.GetComponent<Cell>().SetCoordinates(x, y);
+                var newCell = Instantiate(cubeCellPrefab, grid.GetWorldPosition(x, y), Quaternion.identity, this.transform);
+                Cell cell = newCell.GetComponent<Cell>();
+                cell.SetCoordinates(x, y);
+                
                 Debug.DrawLine(grid.GetWorldPosition(x, y), grid.GetWorldPosition(x, y + 1), Color.green, 100f);
                 Debug.DrawLine(grid.GetWorldPosition(x, y), grid.GetWorldPosition(x + 1, y), Color.green, 100f);
             }
