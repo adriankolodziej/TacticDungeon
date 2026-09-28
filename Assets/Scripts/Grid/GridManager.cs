@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -12,7 +13,7 @@ public class GridManager : MonoBehaviour
     
     void Start()
     {
-        Grid grid = new Grid(10, 10, 1f);
+        Grid<PathNode> grid = new Grid<PathNode>(10, 10, 1f, (Grid<PathNode> g, int x, int y) => new PathNode(g, x, y));
         GridEvents.OnGridCreated.Invoke(this, grid);
     }
 

@@ -14,7 +14,7 @@ public class CellSpawner : MonoBehaviour
         
     }
 
-    private void SpawnCells(object sender, Grid grid)
+    private void SpawnCells(object sender, Grid<PathNode> grid)
     {
         for(int x = 0; x < grid.GridArray.GetLength(0); x++)
         {

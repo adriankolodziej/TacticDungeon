@@ -1,6 +1,4 @@
-using System;
 using UnityEngine;
-using UnityEngine.UI;
 
 public class Cell : MonoBehaviour
 {
@@ -11,7 +9,7 @@ public class Cell : MonoBehaviour
     public int X { get { return x; } }
     public int Y { get { return y; } }
 
-private void OnEnable()
+    private void OnEnable()
     {
         GridEvents.OnCellChosen += ChooseCell;
     }
