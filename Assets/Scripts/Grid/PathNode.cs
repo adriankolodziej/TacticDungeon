@@ -10,8 +10,11 @@ public class PathNode
     public int gCost;
     public int hCost;
     public int fCost;
-    
+
     public PathNode cameFromNode;
+
+    public int X { get { return x; } }
+    public int Y { get { return y; } }
 
     public PathNode(Grid<PathNode> grid, int x, int y)
     {
@@ -22,6 +25,6 @@ public class PathNode
 
     public void CalculateFCost()
     {
-       fCost = gCost + hCost;
+        fCost = gCost + hCost;
     }
 }

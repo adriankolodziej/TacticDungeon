@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -6,14 +7,16 @@ public class GridManager : MonoBehaviour
 {
     private CustomInputSystem inputSystem;
 
+    private Pathfinding pathfinding;
     void Awake()
     {
         inputSystem = new CustomInputSystem();
     }
-    
+
     void Start()
     {
         Grid<PathNode> grid = new Grid<PathNode>(10, 10, 1f, (Grid<PathNode> g, int x, int y) => new PathNode(g, x, y));
+        pathfinding = new Pathfinding(10, 10);
         GridEvents.OnGridCreated.Invoke(this, grid);
     }
 
@@ -42,6 +45,11 @@ public class GridManager : MonoBehaviour
                 {
                     GridEvents.OnCellChosen?.Invoke(this, (cell.X, cell.Y));
                     Debug.Log("Clicked on cell at coordinates: " + cell.transform.position + " (x: " + cell.X + ", y: " + cell.Y + ")");
+                    List<PathNode> path = pathfinding.FindPath(0, 0, cell.X, cell.Y);
+                    for (int i = 0; i < path.Count; i++)
+                    {
+                        GridEvents.OnCellChosenForPath?.Invoke(this, (path[i].X, path[i].Y));
+                    }
                 }
             }
         }

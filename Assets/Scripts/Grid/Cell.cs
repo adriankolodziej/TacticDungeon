@@ -12,11 +12,13 @@ public class Cell : MonoBehaviour
     private void OnEnable()
     {
         GridEvents.OnCellChosen += ChooseCell;
+        GridEvents.OnCellChosenForPath += ChooseCellForPath;
     }
 
     private void OnDisable()
     {
         GridEvents.OnCellChosen -= ChooseCell;
+        GridEvents.OnCellChosenForPath -= ChooseCellForPath;
     }
     public void SetCoordinates(int x, int y)
     {
@@ -36,6 +38,16 @@ public class Cell : MonoBehaviour
         else
         {
             this.GetComponent<Renderer>().material.color = originalColor;
+        }
+    }
+
+    public void ChooseCellForPath(object sender, (int x, int y) cellCoordinates)
+    {
+        var (x, y) = cellCoordinates;
+        if(this.x == x && this.y == y)
+        {
+            this.GetComponent<Renderer>().material.color = Color.red;
+            Debug.Log("Cell chosen at coordinates: " + x + ", " + y);
         }
     }
 }
